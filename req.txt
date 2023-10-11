@@ -8,6 +8,10 @@ greenlet==3.0.0
 h11==0.14.0
 httptools==0.6.0
 idna==3.4
+<<<<<<< HEAD
+=======
+psycopg2-binary==2.9.9
+>>>>>>> 247881e (Initial commit)
 pydantic==2.4.2
 pydantic_core==2.10.1
 PyJWT==2.8.0

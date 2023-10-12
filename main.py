@@ -304,6 +304,8 @@ async def send_email_endpoint(email_request: EmailRequest1):
 # nourimanov@gmail.com
 
 
+def send_email():
+    pass
 def generate_random_code():
     return str(random.randint(100000, 999999))
 
@@ -343,3 +345,6 @@ async def send_email_endpoint(email_request: EmailRequest):
     send_email(email_request.username, email_request.to_email, email_request.subject, email_request.body)
 
     return {"message": "yuborildi !"}
+
+
+

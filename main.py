@@ -23,7 +23,8 @@ import smtplib
 from email.mime.text import MIMEText
 
 from fastapi import HTTPException
-# 
+
+#
 app = FastAPI()
 SECRET_KEY = "yoursecretkey"
 ALGORITHM = "HS256"
@@ -66,6 +67,7 @@ class BearerTokenAuthBackend(AuthenticationBackend):
 
 app.add_middleware(AuthenticationMiddleware, backend=BearerTokenAuthBackend())
 security = HTTPBase(scheme='bearer')
+
 
 # app.add_middleware(AuthenticationMiddleware, backend=BearerTokenAuthBackend())
 #
@@ -119,14 +121,13 @@ async def create(username, email):
     session.commit()
     return {'message': 'Sign Up Successfully'}
 
+
 #
 # @app.get('/profile', dependencies=[Depends(security)])
 async def profile(request: Request):
     if request.user.is_authenticated:
         return Users(username=request.username, email=request.user.email)
     raise HTTPException(status.HTTP_401_UNAUTHORIZED)
-
-
 
 
 @app.get("/")
@@ -185,11 +186,6 @@ async def emaillar(username: str):
     raise HTTPException(status.HTTP_404_NOT_FOUND, "topilmadi")
 
 
-
-
-
-
-
 # email in user account ForeignKey
 
 @app.post("/emails/in_user_foreignkey")
@@ -207,13 +203,10 @@ async def append(email: str = Form(...), user_id: int = Form(...)):
             return f"An error occurred: {e}"
 
 
-
-
 from starlette import status
 
 
 def sen_email(username: str, subject: str, body: str):
-
     with Session(engine) as session:
         retrieved_user = session.execute(select(Users).where(Users.username == username)).scalar()
         if retrieved_user:
@@ -242,7 +235,6 @@ async def send_email_endpoint(email_request: EmailRequest1):
     sen_email(email_request.username, email_request.subject, email_request.body)
 
     return {"message": "yuborildi !"}
-
 
 
 # import smtplib
@@ -304,10 +296,13 @@ async def send_email_endpoint(email_request: EmailRequest1):
 # nourimanov@gmail.com
 
 
-def send_email():
+def send_email4():
     pass
+
+
 def generate_random_code():
     return str(random.randint(100000, 999999))
+
 
 def send_email(username: str, to_email: str, subject: str, body: str):
     random_code = generate_random_code()
@@ -345,6 +340,3 @@ async def send_email_endpoint(email_request: EmailRequest):
     send_email(email_request.username, email_request.to_email, email_request.subject, email_request.body)
 
     return {"message": "yuborildi !"}
-
-
-

@@ -1,3 +1,4 @@
+import random
 from datetime import timedelta, datetime
 from urllib.request import Request
 
@@ -22,7 +23,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 from fastapi import HTTPException
-
+# 
 app = FastAPI()
 SECRET_KEY = "yoursecretkey"
 ALGORITHM = "HS256"
@@ -120,10 +121,10 @@ async def create(username, email):
 
 #
 # @app.get('/profile', dependencies=[Depends(security)])
-# async def profile(request: Request):
-#     if request.user.is_authenticated:
-#         return Users(username=request.username, email=request.user.email)
-#     raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+async def profile(request: Request):
+    if request.user.is_authenticated:
+        return Users(username=request.username, email=request.user.email)
+    raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
 
 
@@ -187,38 +188,6 @@ async def emaillar(username: str):
 
 
 
-def send_email(username: str, to_email: str, subject: str, body: str):
-    name: Send_email = Send_email(username=username, to_email=to_email, subject=subject, body=body)
-
-    with Session(engine) as session:
-        retrieved_user = session.execute(select(Users).where(Users.username == username)).scalar()
-        if retrieved_user:
-            sender_email = "boronovshahriyor2004@gmail.com"
-            sender_password = "sqip huze ceri llpz"
-
-            message = MIMEText(body)
-            message["Subject"] = subject
-            message["From"] = sender_email
-            message["To"] = to_email
-
-            try:
-                with smtplib.SMTP("smtp.gmail.com", 587) as server:
-                    server.starttls()
-                    server.login(sender_email, sender_password)
-                    server.sendmail(sender_email, to_email, message.as_string())
-                    session.add(name)
-                    session.commit()
-                return f"Email sent to {to_email} successfully!"
-            except Exception as e:
-                raise HTTPException(status_code=500, detail=f"Error sending email: {str(e)}")
-    raise HTTPException(status.HTTP_404_NOT_FOUND, "user yo'q")
-
-
-@app.post("/1-email/")
-async def send_email_endpoint(email_request: EmailRequest):
-    send_email(email_request.username, email_request.to_email, email_request.subject, email_request.body)
-
-    return {"message": "yuborildi !"}
 
 
 # email in user account ForeignKey
@@ -239,6 +208,8 @@ async def append(email: str = Form(...), user_id: int = Form(...)):
 
 
 
+
+from starlette import status
 
 
 def sen_email(username: str, subject: str, body: str):
@@ -269,5 +240,106 @@ def sen_email(username: str, subject: str, body: str):
 @app.post("/username in email/")
 async def send_email_endpoint(email_request: EmailRequest1):
     sen_email(email_request.username, email_request.subject, email_request.body)
+
+    return {"message": "yuborildi !"}
+
+
+
+# import smtplib
+# import random
+# from email.mime.text import MIMEText
+# from fastapi import FastAPI, HTTPException
+# from sqlalchemy import select
+# from sqlalchemy.orm import Session
+#
+# from db.Clas import EmailRequest, EmailRequest1
+# from db.connection import engine
+# from db.models import Users, Send_email
+#
+# # from Clas import EmailRequest, Users, Send_email, engine  # Update with your actual imports
+#
+# app = FastAPI()
+
+
+#
+# def send_email_with_code(username: str, to_email: str):
+#     random_code = generate_random_code()
+#     body = f"Tasdiqlash kodingiz: {random_code}"
+#
+#     name = Send_email(username=username, to_email=to_email, subject="Tasdiqlash kodingiz", body=body)
+#
+#     with Session(engine) as session:
+#         retrieved_user = session.execute(select(Users).where(Users.username == username)).scalar()
+#         if retrieved_user:
+#             sender_email = "boronovshahriyor2004@gmail.com"
+#             sender_password = "sqip huze ceri llpz"
+#
+#             message = MIMEText(body)
+#             message["Subject"] = "Tasdiqlash kodingiz"
+#             message["From"] = sender_email
+#             message["To"] = to_email
+#
+#             try:
+#                 with smtplib.SMTP("smtp.gmail.com", 587) as server:
+#                     server.starttls()
+#                     server.login(sender_email, sender_password)
+#                     server.sendmail(sender_email, to_email, message.as_string())
+#                     session.add(name)
+#                     session.commit()
+#                 return random_code
+#             except Exception as e:
+#                 raise HTTPException(status_code=500, detail=f"xatolik yuz berdi: {str(e)}")
+#         else:
+#             raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
+#
+#
+# @app.post("/send-verification-code/")
+# async def send_verification_code(email_request: EmailRequest):
+#     try:
+#         verification_code = send_email_with_code(email_request.username, email_request.to_email)
+#         return {"message": f"Tasdiqlash kodi yuborildi {email_request.to_email} successfully.", "code": verification_code}
+#     except HTTPException as e:
+#         return e
+
+# nourimanov@gmail.com
+
+
+def generate_random_code():
+    return str(random.randint(100000, 999999))
+
+def send_email(username: str, to_email: str, subject: str, body: str):
+    random_code = generate_random_code()
+    body = f"Tasdiqlash kodingiz: {random_code}"
+
+    # name = Send_email(username=username, to_email=to_email, subject="Tasdiqlash kodingiz", body=body)
+    name: Send_email = Send_email(username=username, to_email=to_email, subject=subject, body=body)
+
+    with Session(engine) as session:
+        retrieved_user = session.execute(select(Users).where(Users.username == username)).scalar()
+        if retrieved_user:
+            sender_email = "boronovshahriyor2004@gmail.com"
+            sender_password = "sqip huze ceri llpz"
+
+            message = MIMEText(body)
+            message["Subject"] = subject
+            message["From"] = sender_email
+            message["To"] = to_email
+
+            try:
+                with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                    server.starttls()
+                    server.login(sender_email, sender_password)
+                    server.sendmail(sender_email, to_email, message.as_string())
+                    session.add(name)
+                    session.commit()
+                return f"Email sent to {to_email} successfully!"
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Error sending email: {str(e)}")
+    raise HTTPException(status.HTTP_404_NOT_FOUND, "user yo'q")
+
+
+@app.post("/1-email/")
+async def send_email_endpoint(email_request: EmailRequest):
+    send_email(email_request.username, email_request.to_email, email_request.subject, email_request.body)
 
     return {"message": "yuborildi !"}

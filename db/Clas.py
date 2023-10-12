@@ -17,3 +17,5 @@ class EmailRequest1(BaseModel):
     username: str
     subject: str
     body: str
+
+
